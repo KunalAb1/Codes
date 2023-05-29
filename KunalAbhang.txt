@@ -1,0 +1,576 @@
+1) JDBC -
+
+package entcinfo;
+
+
+import java.sql.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+public class Entcinfo {
+
+   
+    public static void main(String[] args) {
+//For connection Object
+try
+{
+    String user="root";
+    String password="vrush@987";
+    String URL="jdbc:mysql://localhost:3306/entc?characterEncoding utf=8";
+       
+Class.forName("com.mysql.cj.jdbc.Driver");
+       
+Connection con = DriverManager.getConnection(URL,user,password);
+
+if (con!=null)
+{
+System.out.println("\nConnection Established with database");
+}
+
+else
+System.out.println("\nConnection Failed!!");
+
+//retrieve
+
+String query;
+Statement stmt;
+ResultSet set;
+query ="select * from entc.table";
+stmt=con.createStatement();
+set = stmt.executeQuery(query);
+while(set.next()){
+int id=set.getInt(1);
+String name = set.getString(2);
+int rollno = set.getInt(3);
+System.out.println(" details student : "+"\n id: "+id+"\nname "+name+"\nrollno:"+rollno);
+}
+//insert
+
+BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+String q = "insert into entc.table(id,Name,rollno) value(?,?,?)";
+PreparedStatement pstmt = con.prepareStatement(q);
+System.out.println("Enter the Employee ID: ");
+String id1 = br.readLine();
+System.out.println("Enter name of employee: ");
+String name1 = br.readLine();
+System.out.println("Enter the rollno: ");
+String rollno1 = br.readLine();
+
+
+pstmt.setString(1, id1);
+pstmt.setString(2,name1);
+pstmt.setString(3, rollno1);
+pstmt.executeUpdate();
+System.out.println("\nDatabase insert sucessfully");
+
+//update
+
+String q1 = "Update entc.table SET Name='harshu' where id=?";
+PreparedStatement pstmt1 = con.prepareStatement(q1);
+System.out.println("Enter the Employee ID for which name to be changed: ");
+
+String id2 = br.readLine();
+pstmt1.setString(1, id2);
+pstmt1.executeUpdate();
+
+System.out.println("\nDatabase Updated sucessfully");
+
+
+//delete
+String  q3 = "Delete from entc.table where id=?";
+PreparedStatement pstmt2=con.prepareStatement(q3);
+System.out.println("Enter the Employee ID is deleted: ");
+
+String id5 = br.readLine();
+pstmt2.setString(1, id5);
+pstmt2.executeUpdate();
+System.out.print("delete");
+
+
+ } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Entcinfo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Entcinfo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Entcinfo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+}
+   
+}
+
+
+
+2) GUI -
+
+
+package form;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Form extends Frame implements ActionListener{
+
+    Label l1,l2,l3,l4,l5,l6,l7;
+    TextField t1,t2,t3,t4,t5,t6;
+    Button submit;
+    TextArea ta;
+    CheckboxGroup gender;
+    Checkbox male ,female;
+    Choice csclass;
+    Form(){
+        l1 =new Label("Name:");
+        l2 =new Label("Roll no.:");
+        l3 =new Label("class");
+        l4 =new Label("maths:");
+        l5 =new Label("physics:");
+        l6 =new Label("biology:");
+        l7 =new Label("gender");
+       
+       
+        gender= new CheckboxGroup();
+        male= new Checkbox("Male",gender,false);
+        female= new Checkbox("Female",gender,false);
+       
+        csclass= new Choice();
+       
+        csclass.add("S.E");
+        csclass.add("T.E");
+       
+        t1 =new TextField();
+        t2 =new TextField();
+        t3 =new TextField();
+        t4 =new TextField();
+        t5 =new TextField();
+        t6 =new TextField();
+       
+        submit=new Button("Submit");
+        ta=new TextArea("Details");
+               
+        l1.setBounds(10,50,50,20);
+        l2.setBounds(240,50,50,20);
+        l3.setBounds(10,80,50,20);
+        l4.setBounds(10,130,50,20);
+        l5.setBounds(10,180,50,20);
+        l6.setBounds(10,230,50,20);
+       
+       l7.setBounds(240,90,50,20);
+       
+        male.setBounds(300,90,50,20);
+        female.setBounds(360,90,60,20);
+       
+        t1.setBounds(70,50,150,20);
+        t2.setBounds(300,50,150,20);
+        csclass.setBounds(70,80,150,20);
+        t4.setBounds(70,130,150,20);
+        t5.setBounds(70,180,150,20);
+        t6.setBounds(70,230,150,20);
+       
+        submit.setBounds(70,290,150,20);
+        ta.setBounds(100,350,670,100);
+       
+        add(l1);
+        add(l2);
+        add(l3);
+        add(l4);
+        add(l5);
+        add(l6);
+        add(l7);
+        add(t1);
+        add(t2);
+        add(csclass);
+        add(male);
+        add(female);
+        add(t4);
+        add(t5);
+        add(t6);
+       
+        add(ta);
+        add(submit);
+       
+        setTitle("registration form");
+        setSize(500,500);
+        setLayout(null);
+        setVisible(true);
+       
+        submit.addActionListener(this);
+       
+        addWindowListener(new WindowAdapter(){
+        public void windowClosing(WindowEvent e)
+        {
+            dispose();
+        }}
+        );
+    }
+    public void actionPerformed(ActionEvent e){
+       
+        if(e.getSource()==submit)
+        {
+           double math= Double.parseDouble(t4.getText());
+           double phy= Double.parseDouble(t4.getText());
+           double bio= Double.parseDouble(t4.getText());
+           double total=(math+phy+bio);
+           double per=((math+phy+bio)/300)*100;
+             
+           String abc ="name"+t1.getText()+"\nrollno."+t2.getText()+"\nMaths:"+t3.getText()+"\nphysics:"+t4.getText()+"\nbiology"+t5.getText()+"\ntotal:"+total+"/300\n\n PERCENTAGE"+per;
+           ta.setText(abc);
+               }
+               
+    }
+   
+    public static void main(String[] args) {
+        new Form();
+    }
+   
+}
+
+
+
+3) MouseListner -
+
+
+package javaapplication101;
+import java.awt.*;
+import java.awt.event.*;
+
+public class JavaApplication101 extends Frame implements MouseListener {
+    Label l;
+   
+    JavaApplication101(){
+        l=new Label();
+        l.setBounds(25,60,250,30);
+         l.setAlignment(Label.CENTER);
+         this.add(l);
+         this.setSize(300,300);
+         this.setLayout(null);
+         this.setVisible(true);
+         this.addMouseListener(this);
+         //for closing window
+         this.addWindowListener(new WindowAdapter(){
+             public void windowClosing(WindowEvent e){
+                 dispose();
+             }
+         });
+         
+         
+    }
+    public void mouseClicked(MouseEvent e){
+        l.setText("mouse Clicked");
+    }
+      public void mousePressed(MouseEvent e){
+        l.setText("mouse pressed");
+    }
+     public void mouseReleased(MouseEvent e){
+        l.setText("mouse released");
+    }
+     public void mouseEntered(MouseEvent e){
+        l.setText("mouse Enter");
+        this.setVisible(true);
+    }
+      public void mouseExited(MouseEvent e){
+        l.setText("mouse exited");
+        this.setVisible(true);
+      }
+     public static void main(String[] args) {
+     new JavaApplication101();  
+    }
+   
+}
+
+
+
+4) Key Listener -
+
+import java.applet.Applet;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.*;
+
+public class key4 extends Applet implements KeyListener
+{
+
+   String msg ="";
+   public void init() {
+       
+   addKeyListener(this);
+}
+
+public void keyPressed(KeyEvent k)
+{
+int key = k.getKeyCode();
+
+switch(key)
+{
+case KeyEvent.VK_F1:
+msg = msg + "F1 ";
+break;
+case KeyEvent.VK_F2:
+msg = msg + "F2 ";
+break;
+case KeyEvent.VK_F3:
+
+msg = msg + "F3 ";
+break;
+case KeyEvent.VK_F4:
+msg = msg + "F4 ";
+break;
+case KeyEvent.VK_RIGHT:
+msg = msg + "RIGHT ";
+break;
+case KeyEvent.VK_LEFT:
+msg = msg + "LEFT ";;
+break;
+case KeyEvent.VK_UP:
+msg = msg + "UP ";
+break;
+
+case KeyEvent.VK_DOWN:
+msg = msg + "DOWN ";
+break;
+
+}
+
+repaint();
+}
+
+public void keyReleased(KeyEvent k){}
+
+ public void keyTyped(KeyEvent e){}
+
+public void paint(Graphics g)
+{
+
+g.drawString(msg, 10, 10);
+}
+
+   
+   
+}
+
+
+
+5) Inet address 02 -
+
+
+package gfg01;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+class Gfg01 {
+public static void main(String[] args)
+throws UnknownHostException
+{
+InetAddress address1 = InetAddress.getByName("45.22.30.39");
+InetAddress address2= InetAddress.getByName("45.22.30.39");
+InetAddress address3= InetAddress.getByName("172.19.25.29");
+// true, as clearly seen above
+System.out.println("Is Address-1 equals to Address-2? : "+ address1.equals(address2));
+// false
+
+System.out.println("Is Address-1 equals to Address-3? : "+ address1.equals(address3));
+// returns IP address
+System.out.println("IP Address :"+ address1.getHostAddress());
+// returns host name,
+// which is same as IP
+// address in this case
+System.out.println(":Host Name for this IP Address : "+ address1.getHostName());
+// returns address in bytes
+System.out.println("IP Address in bytes : "+ address1.getAddress());
+// false, as the given site
+// has only one server
+System.out.println("Is this Address Multicast?: "+ address1.isMulticastAddress());
+System.out.println("Address in string form : "+ address1.toString());
+// returns fully qualified
+// domain name for this IP address.
+System.out.println("Fully qualified domain name for this IPaddress :"+ address1.getCanonicalHostName());
+// hashcode for this IP address.
+System.out.println("Hashcode for this IPaddress : "+ address1.hashCode());
+// to check if the InetAddress is
+// an unpredictable address..
+System.out.println("Is the InetAddress an unpredictableaddress? : "+ address1.isAnyLocalAddress());
+}
+}
+
+
+6) Add no. Rmi -
+
+one.java
+ import java.rmi.*; 
+interface one extends Remote 
+{ 
+ public int add(int a, int b) throws RemoteException;
+ }
+
+ two.java 
+import java.rmi.*; 
+import java.rmi.server.*; 
+public class two extends UnicastRemoteObject implements one
+ {
+ public two() throws RemoteException { }
+ public int add(int a, int b) throws RemoteException
+ { 
+ return a+b;
+ }
+ }  
+  rmiserver.java 
+import java.net.MalformedURLException;
+ import java.rmi.*; 
+public class rmiserver 
+{
+ public static void main(String args[]) throws Exception 
+ {
+ try
+ {
+ two twox = new two();
+ Naming.bind("add", twox);
+ System.out.println("Object registered"); 
+ } 
+ catch(MalformedURLException | AlreadyBoundException | RemoteException e) { 
+System.out.println("Exception" + e);
+ }
+ }
+ }  
+
+  rmiclient.java import java.io.*;
+ import java.rmi.*;
+ import java.net.*;
+ public class rmiclient
+{
+ public static void main(String args[]) throws Exception
+ { 
+ try { String s1 = "rmi://localhost/add"; 
+ one onex = (one)Naming.lookup(s1);
+ int m = onex.add(10,20); 
+System.out.println("Addition is ",m);
+ } 
+ catch (Exception e) 
+ {
+ System.out.println("Exception" + e);
+ } 
+ }
+}  
+
+
+7) Palindrome -
+
+
+one.java
+ import java.rmi.*;
+ interface one extends Remote 
+{
+ public int palin(String a) throws RemoteException;
+ }
+ 
+two.java 
+import java.rmi.*;
+ import java.rmi.server.*; 
+public class two extends UnicastRemoteObject implements one 
+{
+ public two() throws RemoteException { }
+ public int palin(String a) throws RemoteException
+ {
+ System.out.println("Hello"); 
+StringBuffer str = new StringBuffer(a); 
+ String str1 = str.toString();
+ System.out.println("Print : " + str1.toString()); 
+StringBuffer str2 = str.reverse(); 
+System.out.println("Print : " + str2.toString());
+ int b = str1.compareTo(str2.toString());
+ System.out.println("Print : " + b);
+ if (b == 0) return 1;
+ else return 0; 
+ }
+ } 
+
+
+rmiserver.java
+import java.net.MalformedURLException; 
+import java.rmi.*;
+ public class rmiserver
+ { 
+ public static void main(String args[]) throws Exception
+ {
+ try 
+ {
+ two twox = new two(); 
+Naming.bind("palin", twox); 
+System.out.println("Object registered");
+ }
+ catch(MalformedURLException | AlreadyBoundException | RemoteException e) { 
+System.out.println("Exception" + e); 
+ }
+ }
+ }
+ 
+
+rmiclient.java 
+import java.io.*; 
+import java.rmi.*; 
+import java.net.*;
+ import java.util.Scanner;
+ public class rmiclient 
+{
+ public static void main(String args[]) throws Exception
+ { 
+ Scanner sc = new Scanner(System.in); 
+ try 
+ {
+ String s1 = "rmi://localhost/palin";
+ one onex = (one)Naming.lookup(s1);
+ System.out.println("Enter a string ");
+ String s = sc.next(); 
+ int m = onex.palin(s); 
+System.out.println("Print : " + m); 
+ if (m == 1) 
+ { System.out.println("The given string is a Palindrome"); 
+ } 
+ else 
+ {
+ System.out.println("The given string is not a Palindrome"); 
+ }
+ }
+ catch (Exception e)
+ {
+ System.out.println("Exception" + e);
+ }
+ }
+}  
+
+
+8) Inet address Hostname -
+
+
+package gfg;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+class Gfg {
+public static void main(String[] args)
+throws UnknownHostException
+{
+
+InetAddress address1 = InetAddress.getLocalHost();
+System.out.println("InetAddress of Local Host: "+ address1);
+
+InetAddress address2= InetAddress.getByName("45.22.30.39");
+System.out.println("InetAddress of Named Host : "+ address2);
+InetAddress address3[]= InetAddress.getAllByName("172.19.25.29");
+for (int i = 0; i < address3.length; i++) {
+System.out.println("ALL InetAddresses of Named Host : "+ address3[i]);
+}
+byte IPAddress[] = { 125, 0, 0, 1 };
+InetAddress address4= InetAddress.getByAddress(IPAddress);
+System.out.println("InetAddresses of Host with specified IPAddress : "+ address4);
+
+byte[] IPAddress2= { 105, 22, (byte)223, (byte)186 };
+InetAddress address5 =
+InetAddress.getByAddress("gfg.com", IPAddress2);
+
+System.out.println("InetAddresses of Host with specified IPAddress and hostname :"+ address5);
+}
+}
